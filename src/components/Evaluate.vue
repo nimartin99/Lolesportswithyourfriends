@@ -25,6 +25,11 @@
                     </v-card>
                     <div style="width: 5%; display: flex; flex-direction: column; justify-content: center; align-items: center">
                         <span>{{ `${match.dateTime.getHours()}:${('0' + match.dateTime.getMinutes()).slice(-2)}` }}</span>
+                        <v-btn
+                            @click="openEvaluateDialog(match)"
+                        >
+                            Evaluate
+                        </v-btn>
                     </div>
                     <v-card
                         class="teamCard"
@@ -42,6 +47,36 @@
                 </div>
             </div>
         </div>
+
+        <v-dialog
+            v-model="evaluateDialog"
+            scrollable
+        >
+            <div
+                style="width: 100%; height: 100%"
+            >
+                <v-card
+                    style="background-color: #494949; width: 100%; height: 100%; border-radius: 8px"
+                >
+                    <v-card-title
+                        style="background-color: #2b2b2b; color: white; display: flex; flex-direction: row; align-items: center"
+                    >
+                        <v-icon style="margin-right: 8px">mdi-crown</v-icon>
+                        <span>Evaluate Match</span>
+                        <v-spacer/>
+                        <v-btn
+                            style="min-width: 0; width: 36px"
+                            @click="evaluateDialog = false"
+                        >
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-card-title>
+
+                    <EvaluateDialog />
+                </v-card>
+            </div>
+        </v-dialog>
+
         <v-snackbar
             v-model="snackbarActivator"
             bottom
@@ -55,9 +90,11 @@
 <script>
 import * as request from "@/api/request";
 import {reactive} from "vue";
+import EvaluateDialog from "@/components/EvaluateDialog";
 
 export default {
-    name: "Bet",
+    name: "Evaluate",
+    components: {EvaluateDialog},
     // Properties returned from data() become reactive state
     // and will be exposed on `this`.
     data() {
@@ -71,12 +108,19 @@ export default {
             snackbarActivator: false,
             snackbarText: '',
             snackbarColor: 'error',
+
+            matchStatsRaw: null,
+            evaluateDialog: false,
         }
     },
 
     // Methods are functions that mutate state and trigger updates.
     // They can be bound as event handlers in templates.
     methods: {
+        openEvaluateDialog() {
+            this.evaluateDialog = !this.evaluateDialog;
+        },
+
         async requestMatches() {
             const response = await request.getRequest("/matches");
             const res = await response.json();
@@ -152,6 +196,62 @@ export default {
         matchInPast(match) {
             return match.dateTime.getTime() < this.now.getTime();
         },
+
+        async requestMatchFromLolesports(matchId, timestamp) {
+            let response = await fetch('https://feed.lolesports.com/livestats/v1/window/' + matchId + '?startingTime=' + timestamp, {
+                method: "GET", // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            let matchStats;
+            if(response.status === 200) {
+                matchStats = await response.json();
+            } else {
+                this.snackbarColor = "error";
+                this.snackbarText = "Something went wrong getting the match stats.";
+                this.snackbarActivator = true;
+                return;
+            }
+
+
+            const playerStats = {
+                team1: [],
+                team2: [],
+            };
+            for (let i = 0; i <= 4; i++) {
+                // wait for the promise to resolve before advancing the for loop
+                response = await this.requestTwoPlayerStats(matchId, timestamp, i);
+                if(response.status === 200) {
+                    const playerData = await response.json();
+                    playerStats.team1[i] = playerData.frames[playerData.frames.length - 1].participants[0];
+                    playerStats.team2[i] = playerData.frames[playerData.frames.length - 1].participants[1];
+                } else {
+                    this.snackbarColor = "error";
+                    this.snackbarText = "Something went wrong getting the match stats.";
+                    this.snackbarActivator = true;
+                    return;
+                }
+            }
+
+            console.log("Matchstats: ", matchStats);
+            console.log("Playerstats: ", playerStats);
+        },
+
+        async requestTwoPlayerStats(matchId, timestamp, index) {
+            return  await fetch('https://feed.lolesports.com/livestats/v1/details/' + matchId + '?startingTime=' + timestamp + '&participantIds=' + (index + 1) + '_' + (index + 6), {
+                method: "GET", // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        },
+
+        buildMatchStatsJSON(matchStats, playerStats) {
+            const lastRfcFrame = rawStats.frames[rawStats.frames.length - 1];
+            // const team1 = lastRfcFrame.participants[0];
+            // const team2 = lastRfcFrame.participants[1];
+        }
     },
 
     // Lifecycle hooks are called at different stages
@@ -161,6 +261,23 @@ export default {
         this.now = new Date();
         await this.requestMatches();
         await this.requestMyAccount();
+
+        await this.requestMatchFromLolesports('111561061776880408', '2024-02-18T16:43:40.000Z');
+
+
+
+        // if(response.status === 200) {
+        //     const res = await response.json();
+        //
+        //     this.buildMatchStatsJSON(res);
+        //     this.matchStatsRaw = res;
+        //     console.log(this.matchStatsRaw);
+        // } else {
+        //     this.snackbarColor = "error";
+        //     this.snackbarText = "Something went wrong getting the match stats.";
+        //     this.snackbarActivator = true;
+        // }
+
     }
 }
 </script>
@@ -188,5 +305,10 @@ export default {
     .teamCardTitle {
         font-size: 9.5pt;
     }
+}
+
+.dialogClass {
+    display: flex;
+    justify-content: center;
 }
 </style>
