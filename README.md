@@ -67,3 +67,20 @@ bun run lint
 ### Customize configuration
 
 See [Configuration Reference](https://vitejs.dev/config/).
+
+### Lolesports API Documentation
+
+Get Leagues:
+```
+https://esports-api.lolesports.com/persisted/gw/getLeagues
+```
+
+Get Live Event:
+```
+https://esports-api.lolesports.com/persisted/gw/getLive
+```
+
+Get Schedule:
+```
+https://esports-api.lolesports.com/persisted/gw/getSchedule?hl=de-DE&leagueId=LEAGUEID
+```

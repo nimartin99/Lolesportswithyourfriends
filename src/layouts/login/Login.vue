@@ -39,6 +39,7 @@
                     prepend-inner-icon="mdi-lock-outline"
                     variant="outlined"
                     @click:append-inner="passwordVisible = !passwordVisible"
+                    @keydown.enter="login"
                 ></v-text-field>
 
 <!--                <v-card-->

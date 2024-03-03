@@ -68,7 +68,7 @@
                 <v-btn
                     @click="getInfo"
                 >
-                    Get Info
+                    {{ stepperValue === 1 ? 'Get Info' : 'Upload Data' }}
                 </v-btn>
             </div>
         </v-stepper>
