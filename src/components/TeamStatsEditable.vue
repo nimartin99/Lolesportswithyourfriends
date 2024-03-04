@@ -3,7 +3,7 @@
         <div class="rowWithTextField">
             <span>Kills</span>
             <v-text-field
-                v-model="teamStats.teamData.totalKills"
+                v-model="teamStats.totalKills"
                 hide-details
                 single-line
                 type="number"
@@ -14,7 +14,7 @@
         <div class="rowWithTextField">
             <span>Towers</span>
             <v-text-field
-                v-model="teamStats.teamData.towers"
+                v-model="teamStats.towers"
                 hide-details
                 single-line
                 type="number"
@@ -25,7 +25,7 @@
         <div class="rowWithTextField">
             <span>Inhibitors</span>
             <v-text-field
-                v-model="teamStats.teamData.inhibitors"
+                v-model="teamStats.inhibitors"
                 hide-details
                 single-line
                 type="number"
@@ -36,7 +36,7 @@
         <div class="rowWithTextField">
             <span>Dragons</span>
             <v-text-field
-                v-model="teamStats.teamData.dragons"
+                v-model="teamStats.dragons"
                 hide-details
                 single-line
                 variant="outlined"
@@ -46,7 +46,7 @@
         <div class="rowWithTextField">
             <span>Total Gold</span>
             <v-text-field
-                v-model="teamStats.teamData.totalGold"
+                v-model="teamStats.totalGold"
                 hide-details
                 single-line
                 variant="outlined"

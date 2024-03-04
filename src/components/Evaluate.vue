@@ -72,7 +72,10 @@
                         </v-btn>
                     </v-card-title>
 
-                    <EvaluateDialog />
+                    <EvaluateDialog
+                        :teams="teams"
+                        :match="evaluationMatch"
+                    />
                 </v-card>
             </div>
         </v-dialog>
@@ -91,6 +94,7 @@
 import * as request from "@/api/request";
 import {reactive} from "vue";
 import EvaluateDialog from "@/components/EvaluateDialog";
+import {mapActions} from "vuex";
 
 export default {
     name: "Evaluate",
@@ -102,6 +106,7 @@ export default {
             account: null,
             matches: [],
             matchesPerDay: [],
+            teams: [],
 
             now: null,
 
@@ -111,14 +116,18 @@ export default {
 
             matchStatsRaw: null,
             evaluateDialog: false,
+            evaluationMatch: null,
         }
     },
 
     // Methods are functions that mutate state and trigger updates.
     // They can be bound as event handlers in templates.
     methods: {
-        openEvaluateDialog() {
+        ...mapActions('teams', [ 'getTeams' ]),
+
+        openEvaluateDialog(match) {
             this.evaluateDialog = !this.evaluateDialog;
+            this.evaluationMatch = match;
         },
 
         async requestMatches() {
@@ -233,9 +242,6 @@ export default {
                     return;
                 }
             }
-
-            console.log("Matchstats: ", matchStats);
-            console.log("Playerstats: ", playerStats);
         },
 
         async requestTwoPlayerStats(matchId, timestamp, index) {
@@ -261,9 +267,8 @@ export default {
         this.now = new Date();
         await this.requestMatches();
         await this.requestMyAccount();
-
         await this.requestMatchFromLolesports('111561061776880408', '2024-02-18T16:43:40.000Z');
-
+        this.teams = await this.getTeams();
 
 
         // if(response.status === 200) {

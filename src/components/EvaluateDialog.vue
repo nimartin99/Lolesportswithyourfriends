@@ -48,13 +48,20 @@
                 style="display: flex; flex-direction: row; justify-content: center; width: 100%; height: 70vh; overflow: auto"
             >
                 <div style="display: flex; flex-direction: column; width: 50%">
-                    <span>Blue Team</span>
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items:center; padding: 0 12px">
+                        <span>{{ winnerTeam === null ? 'Choose Winner' : winnerTeam._id === match.team1._id ? 'Winner: ' : 'Looser:' }}</span>
+                        <v-btn @click="winnerTeam = match.team1">{{ match.team1.name }}</v-btn>
+                    </div>
                     <TeamStatsEditable
                         :team-stats="blueTeam"
                     />
                 </div>
                 <div style="display: flex; flex-direction: column; width: 50%">
-                    <span>Red Team</span>
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items:center; padding: 0 12px">
+                        <span>{{ winnerTeam === null ? 'Choose Winner' : winnerTeam._id === match.team2._id ? 'Winner: ' : 'Looser:' }}</span>
+                        <v-btn @click="winnerTeam = match.team2">{{ match.team2.name }}</v-btn>
+                    </div>
+
                     <TeamStatsEditable
                         :team-stats="redTeam"
                     />
@@ -66,7 +73,7 @@
             >
                 <div/>
                 <v-btn
-                    @click="getInfo"
+                    @click="stepperValue === 1 ? getInfo() : postEvaluation()"
                 >
                     {{ stepperValue === 1 ? 'Get Info' : 'Upload Data' }}
                 </v-btn>
@@ -94,12 +101,16 @@ export default {
     components: {TeamStatsEditable},
     // Properties returned from data() become reactive state
     // and will be exposed on `this`.
+    props: {
+        teams: { type: Array, required: false, default: 36 },
+        match: { type: Object, required: true },
+    },
     data() {
         return {
             stepperValue: 1,
 
-            matchId: '111561061776880408',
-            timestamp: '2024-02-18T16:43:40.000Z',
+            matchId: '111561061776880358',
+            timestamp: '2024-02-03T16:39:20.000Z',
 
             matchRaw: {},
             playerRaw: {},
@@ -111,14 +122,13 @@ export default {
 
 
             // Match vars
+            winnerTeam: null,
             blueTeam: {
                 players: [],
-                teamData: {},
             },
 
             redTeam: {
                 players: [],
-                teamData: {},
             },
         }
     },
@@ -131,6 +141,31 @@ export default {
             if(this.matchId !== '' && this.timestamp !== '') {
                 await this.requestMatchFromLolesports(this.matchId, this.timestamp);
                 this.parseDataToLocals();
+            }
+        },
+
+        async postEvaluation() {
+            if(this.winnerTeam === null) {
+                this.snackbarActivator = true;
+                this.snackbarColor = 'error';
+                this.snackbarText = "You still need to choose a winner of the game.";
+                return;
+            }
+            const evaluation = {
+                matchId: this.match._id,
+                winnerTeamId: this.winnerTeam._id,
+                lolesportsMatchId: this.matchId,
+                lolesportsTimestamp: this.timestamp,
+                blueTeam: this.blueTeam,
+                redTeam: this.redTeam,
+            };
+            console.log(evaluation)
+
+            const response = await request.postRequest("/evaluation", evaluation);
+            if(response.status === 201) {
+                this.snackbarActivator = true;
+                this.snackbarColor = 'success';
+                this.snackbarText = 'Created Match evaluation.';
             }
         },
 
@@ -173,8 +208,6 @@ export default {
 
             this.matchRaw = matchStats;
             this.playerRaw = playerStats;
-            console.log("Matchstats: ", matchStats);
-            console.log("Playerstats: ", playerStats);
         },
 
         async requestTwoPlayerStats(matchId, timestamp, index) {
@@ -187,18 +220,22 @@ export default {
         },
 
         parseDataToLocals() {
+            const teamsMetaData = this.matchRaw.frames[this.matchRaw.frames.length - 1];
+            teamsMetaData.blueTeam.players = [];
+            teamsMetaData.redTeam.players = [];
+
             for(let i = 0; i < this.matchRaw.gameMetadata.blueTeamMetadata.participantMetadata.length; i++) {
                 const bluePlayer = Object.assign({}, this.matchRaw.gameMetadata.blueTeamMetadata.participantMetadata[i], this.playerRaw.team1[i]);
-                this.blueTeam.players.push(bluePlayer);
+                bluePlayer.name = bluePlayer.summonerName.substring(bluePlayer.summonerName.indexOf(' ') + 1);
+                teamsMetaData.blueTeam.players.push(bluePlayer);
+
                 const redPlayer = Object.assign({}, this.matchRaw.gameMetadata.redTeamMetadata.participantMetadata[i], this.playerRaw.team1[i]);
-                this.redTeam.players.push(redPlayer);
+                redPlayer.name = redPlayer.summonerName.substring(redPlayer.summonerName.indexOf(' ') + 1);
+                teamsMetaData.redTeam.players.push(redPlayer);
             }
 
-            const teamsMetaData = this.matchRaw.frames[this.matchRaw.frames.length - 1];
-            this.blueTeam.teamData = teamsMetaData.blueTeam;
-            this.redTeam.teamData = teamsMetaData.redTeam;
-            console.log(this.blueTeam);
-            console.log(this.redTeam);
+            this.blueTeam = teamsMetaData.blueTeam;
+            this.redTeam = teamsMetaData.redTeam;
         },
     },
 

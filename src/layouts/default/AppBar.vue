@@ -21,6 +21,7 @@
             <v-list-item prepend-icon="mdi-table" title="Leaderboard" @click="setRouterPath('Leaderboard')"></v-list-item>
             <v-list-item prepend-icon="mdi-plus" title="Create Matches" @click="setRouterPath('Matches')"></v-list-item>
             <v-list-item prepend-icon="mdi-crown" title="Evaluate Matches" @click="setRouterPath('Evaluate')"></v-list-item>
+            <v-list-item prepend-icon="mdi-account-group" title="Manage Teams" @click="setRouterPath('Teams')"></v-list-item>
         </v-list>
     </v-navigation-drawer>
 </template>

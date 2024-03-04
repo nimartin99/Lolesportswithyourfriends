@@ -26,11 +26,24 @@ const postRequest = async (path, body) => {
             "Authorization": `Bearer ${token}`
         },
     });
-    console.log(response);
+    return response;
+}
+
+const patchRequest = async (path, body) => {
+    const token = getCookie('token');
+    const response = await fetch('http://' + 'localhost:3000' + '/api' + path, {
+        method: "PATCH", // *GET, POST, PUT, DELETE, etc.
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
     return response;
 }
 
 export {
     getRequest,
     postRequest,
+    patchRequest,
 }
