@@ -4,10 +4,11 @@ const getCookie = (name) => {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-const getRequest = async (path) => {
+const getRequest = async (path, body) => {
     const token = getCookie('token');
     const response = await fetch('http://' + 'localhost:3000' + '/api' + path, {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
+        body: JSON.stringify(body),
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`

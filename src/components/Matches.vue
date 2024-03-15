@@ -1,19 +1,16 @@
 <template>
     <div style="display: flex; flex-direction: column; padding: 1vw; color: white">
-        <div v-for="day in matchesPerDay"
-             :key="day.date">
-            <span>{{ `${('0' + day.date.getDate()).slice(-2)}.${('0' + (day.date.getMonth() + 1)).slice(-2)}.${day.date.getFullYear()}` }}</span>
+        <div v-for="matchDay in matchesPerDay"
+             :key="matchDay.date">
+            <span>{{ `${('0' + matchDay.date.getDate()).slice(-2)}.${('0' + (matchDay.date.getMonth() + 1)).slice(-2)}.${matchDay.date.getFullYear()}` }}</span>
             <div
-                v-for="(match) in day.matches"
+                v-for="(match) in matchDay.matches"
                 :key="match._id"
                 style="margin: 2px 0"
             >
                 <div style="display: flex; flex-direction: row; justify-content: space-around;">
                     <v-card
                         class="teamCard"
-                        :class="userPlacedBets(match, match.team1._id) ? 'teamSelected' : ''"
-                        :style="matchInPast(match) ? 'cursor: not-allowed' : 'cursor: pointer'"
-                        @click="placeBet(match, match.team1._id)"
                     >
                         <v-card-title
                             class="teamCardTitle"
@@ -32,9 +29,6 @@
                     </div>
                     <v-card
                         class="teamCard"
-                        :class="userPlacedBets(match, match.team2._id) ? 'teamSelected' : ''"
-                        :style="matchInPast(match) ? 'cursor: not-allowed' : 'cursor: pointer'"
-                        @click="placeBet(match, match.team2)"
                     >
                         <v-card-title
                             class="teamCardTitle"
@@ -64,9 +58,10 @@
 <script>
 import * as request from "@/api/request";
 import winningSymbol from "@/assets/lec_logo_yellow_whiteborder.png";
+import {mapActions} from "vuex";
 
 export default {
-    name: "Bet",
+    name: "Matches",
     // Properties returned from data() become reactive state
     // and will be exposed on `this`.
     data() {
@@ -89,40 +84,10 @@ export default {
     // Methods are functions that mutate state and trigger updates.
     // They can be bound as event handlers in templates.
     methods: {
-        async requestMatches() {
-            const response = await request.getRequest("/matches");
-            const res = await response.json();
-            res.matches.map((match) => {
-                match.dateTime = new Date(match.dateTime);
-            });
-            this.matches = res.matches;
-            this.fillMatchesPerDayArray();
-        },
+        ...mapActions('matches', [ 'getMatchDays' ]),
 
-        fillMatchesPerDayArray() {
-            this.matchesPerDay = [];
-            const matchesPerDayVar = [];
-            this.matches.map((match) => {
-                const matchDate = new Date(match.dateTime.getFullYear(), match.dateTime.getMonth(), match.dateTime.getDate());
-                const matchDay = matchesPerDayVar.find((day) => {
-                    return day.date.getTime() === matchDate.getTime();
-                });
-                if(matchDay) {
-                    matchDay.matches.push(match);
-                } else {
-                    matchesPerDayVar.push({
-                        date: matchDate,
-                        matches: [ match ],
-                    })
-                }
-            });
-
-            matchesPerDayVar.sort((a, b) => {
-                if (a.date.getTime() < b.date.getTime()) return -1;
-                else return 1;
-            })
-
-            this.matchesPerDay = matchesPerDayVar;
+        async requestMatchDays() {
+            this.matchesPerDay = await this.getMatchDays();
         },
 
         async requestMyAccount() {
@@ -158,7 +123,7 @@ export default {
         },
 
         userPlacedBets(match, teamId) {
-            return match.bets.some((bet) => {
+            return match.bets && match.bets.some((bet) => {
                 return bet.account === this.account._id && bet.team === teamId;
             })
         },
@@ -173,8 +138,9 @@ export default {
     // This function will be called when the component is mounted.
     async mounted() {
         this.now = new Date();
-        await this.requestMatches();
+        await this.requestMatchDays();
         await this.requestMyAccount();
+        console.log(this.matchesPerDay)
     }
 }
 </script>

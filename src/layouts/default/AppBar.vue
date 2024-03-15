@@ -17,9 +17,11 @@
         style="color: white; background-color: #2B2B2BFF"
     >
         <v-list>
-            <v-list-item prepend-icon="mdi-sword-cross" title="Bet" @click="setRouterPath('Bet')"></v-list-item>
+            <v-list-item prepend-icon="mdi-sword-cross" title="Roster" @click="setRouterPath('Roster')"></v-list-item>
+            <v-list-item prepend-icon="mdi-tournament" title="Matches" @click="setRouterPath('Matches')"></v-list-item>
             <v-list-item prepend-icon="mdi-table" title="Leaderboard" @click="setRouterPath('Leaderboard')"></v-list-item>
-            <v-list-item prepend-icon="mdi-plus" title="Create Matches" @click="setRouterPath('Matches')"></v-list-item>
+            <v-divider/>
+            <v-list-item prepend-icon="mdi-plus" title="Create Matches" @click="setRouterPath('CreateMatches')"></v-list-item>
             <v-list-item prepend-icon="mdi-crown" title="Evaluate Matches" @click="setRouterPath('Evaluate')"></v-list-item>
             <v-list-item prepend-icon="mdi-account-group" title="Manage Teams" @click="setRouterPath('Teams')"></v-list-item>
         </v-list>

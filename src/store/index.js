@@ -1,6 +1,7 @@
 import Vuex from 'vuex';
 import teams from "@/store/modules/teams";
 import matches from "@/store/modules/matches";
+import rosters from "@/store/modules/rosters";
 // import createPersistedState from 'vuex-persistedstate';
 
 
@@ -33,6 +34,7 @@ const store = new Vuex.Store({
     modules: {
         teams,
         matches,
+        rosters,
     },
     strict: process.env.NODE_ENV !== 'production',
 });

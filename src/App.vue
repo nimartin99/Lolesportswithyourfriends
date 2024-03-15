@@ -19,7 +19,7 @@ export default {
     // They can be bound as event handlers in templates.
     methods: {
         ...mapActions('teams', [ 'getTeams' ]),
-        ...mapActions('matches', [ 'getMatches' ]),
+        ...mapActions('matches', [ 'getMatches', 'getMatchDays' ]),
     },
 
     // Lifecycle hooks are called at different stages
@@ -28,6 +28,7 @@ export default {
     async mounted() {
         await this.getTeams();
         await this.getMatches();
+        await this.getMatchDays();
     }
 }
 </script>

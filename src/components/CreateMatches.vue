@@ -58,13 +58,6 @@ export default {
         }
     },
 
-    watch: {
-        matchDateTime() {
-            console.log(this.matchDateTime);
-            console.log(new Date(this.matchDateTime));
-        }
-    },
-
     // Methods are functions that mutate state and trigger updates.
     // They can be bound as event handlers in templates.
     methods: {

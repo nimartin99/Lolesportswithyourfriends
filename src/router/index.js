@@ -17,16 +17,16 @@ const routes = [
         ],
     },
     {
-        path: '/Bet',
+        path: '/Roster',
         component: () => import('@/layouts/default/Default.vue'),
         children: [
             {
                 path: '',
-                name: 'Bet',
+                name: 'Roster',
                 // route level code-splitting
                 // this generates a separate chunk (Home-[hash].js) for this route
                 // which is lazy-loaded when the route is visited.
-                component: () => import('@/components/Bet.vue'),
+                component: () => import('@/components/Roster.vue'),
             },
         ],
     },
@@ -54,7 +54,7 @@ const routes = [
                 // route level code-splitting
                 // this generates a separate chunk (Home-[hash].js) for this route
                 // which is lazy-loaded when the route is visited.
-                component: () => import('@/views/Home.vue'),
+                component: () => import('@/components/Matches.vue'),
             },
         ],
     },
@@ -78,11 +78,25 @@ const routes = [
         children: [
             {
                 path: '',
-                name: 'Teams',
+                name: 'ManageTeams',
                 // route level code-splitting
                 // this generates a separate chunk (Home-[hash].js) for this route
                 // which is lazy-loaded when the route is visited.
                 component: () => import('@/components/ManageTeams.vue'),
+            },
+        ],
+    },
+    {
+        path: '/CreateMatches',
+        component: () => import('@/layouts/default/Default.vue'),
+        children: [
+            {
+                path: '',
+                name: 'Teams',
+                // route level code-splitting
+                // this generates a separate chunk (Home-[hash].js) for this route
+                // which is lazy-loaded when the route is visited.
+                component: () => import('@/components/CreateMatches.vue'),
             },
         ],
     },

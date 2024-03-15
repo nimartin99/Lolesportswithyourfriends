@@ -54,6 +54,7 @@
                     </div>
                     <TeamStatsEditable
                         :team-stats="blueTeam"
+                        :local-team="teams.find(team => team._id === match.team1._id)"
                     />
                 </div>
                 <div style="display: flex; flex-direction: column; width: 50%">
@@ -61,9 +62,9 @@
                         <span>{{ winnerTeam === null ? 'Choose Winner' : winnerTeam._id === match.team2._id ? 'Winner: ' : 'Looser:' }}</span>
                         <v-btn @click="winnerTeam = match.team2">{{ match.team2.name }}</v-btn>
                     </div>
-
                     <TeamStatsEditable
                         :team-stats="redTeam"
+                        :local-team="teams.find(team => team._id === match.team2._id)"
                     />
                 </div>
             </div>
@@ -109,7 +110,7 @@ export default {
         return {
             stepperValue: 1,
 
-            matchId: '111561061776880358',
+            matchId: '',
             timestamp: '2024-02-03T16:39:20.000Z',
 
             matchRaw: {},
@@ -141,6 +142,8 @@ export default {
             if(this.matchId !== '' && this.timestamp !== '') {
                 await this.requestMatchFromLolesports(this.matchId, this.timestamp);
                 this.parseDataToLocals();
+                this.calculateBasePoints();
+                // this.calculateItems();
             }
         },
 
@@ -221,6 +224,7 @@ export default {
 
         parseDataToLocals() {
             const teamsMetaData = this.matchRaw.frames[this.matchRaw.frames.length - 1];
+            console.log(teamsMetaData);
             teamsMetaData.blueTeam.players = [];
             teamsMetaData.redTeam.players = [];
 
@@ -229,21 +233,35 @@ export default {
                 bluePlayer.name = bluePlayer.summonerName.substring(bluePlayer.summonerName.indexOf(' ') + 1);
                 teamsMetaData.blueTeam.players.push(bluePlayer);
 
-                const redPlayer = Object.assign({}, this.matchRaw.gameMetadata.redTeamMetadata.participantMetadata[i], this.playerRaw.team1[i]);
+                const redPlayer = Object.assign({}, this.matchRaw.gameMetadata.redTeamMetadata.participantMetadata[i], this.playerRaw.team2[i]);
                 redPlayer.name = redPlayer.summonerName.substring(redPlayer.summonerName.indexOf(' ') + 1);
                 teamsMetaData.redTeam.players.push(redPlayer);
             }
 
+            teamsMetaData.
+
             this.blueTeam = teamsMetaData.blueTeam;
             this.redTeam = teamsMetaData.redTeam;
         },
+
+        calculateBasePoints() {
+            this.blueTeam.players.forEach((player) => {
+                player.basePoints = player.kills * 5 + player.deaths * (-3) + player.assists * 2;
+            });
+            this.redTeam.players.forEach((player) => {
+                player.basePoints = player.kills * 5 + player.deaths * (-3) + player.assists * 2;
+            });
+        }
     },
 
     // Lifecycle hooks are called at different stages
     // of a component's lifecycle.
     // This function will be called when the component is mounted.
     async mounted() {
+        this.timestamp = new Date().toISOString();
 
+        this.matchId = "111997906552170257";
+        this.timestamp = "2024-03-11T17:18:50.000Z";
     }
 }
 </script>

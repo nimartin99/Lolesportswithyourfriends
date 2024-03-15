@@ -101,7 +101,7 @@ export default {
                 const res = await response.json()
                 document.cookie = `token=${res.token}`
                 console.log("Login successful!");
-                this.$router.push("/Bet");
+                this.$router.push("/Roster");
 
             } else {
                 console.log("Login failed");
