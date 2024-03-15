@@ -86,7 +86,7 @@ export default {
     // They can be bound as event handlers in templates.
     methods: {
         async login() {
-            const response = await fetch('http://' + 'localhost:3000' + '/api/auth/signin', {
+            const response = await fetch('http://' + '85.215.158.110:3000' + '/api/auth/signin', {
                 method: "POST", // *GET, POST, PUT, DELETE, etc.
                 headers: {
                     "Content-Type": "application/json",

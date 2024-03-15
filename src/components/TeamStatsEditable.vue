@@ -279,23 +279,24 @@
                     </div>
                 </v-expansion-panel-text>
             </v-expansion-panel>
-<!--            <v-expansion-panel-->
-<!--                :title="localTeam.abbreviation + ' ' +coach.name"-->
-<!--            >-->
-<!--                <v-expansion-panel-text>-->
-<!--                    <div class="rowWithTextField">-->
-<!--                        <span style="width: 60%">Basepoints</span>-->
-<!--                        <v-text-field-->
-<!--                            v-model="player.basePoints"-->
-<!--                            hide-details-->
-<!--                            single-line-->
-<!--                            variant="outlined"-->
-<!--                            type="number"-->
-<!--                            class="textField"-->
-<!--                        />-->
-<!--                    </div>-->
-<!--                </v-expansion-panel-text>-->
-<!--            </v-expansion-panel>-->
+
+            <v-expansion-panel
+                :title="localTeam.abbreviation + ' ' + teamStats.coach.name"
+            >
+                <v-expansion-panel-text>
+                    <div class="rowWithTextField">
+                        <span style="width: 60%">Basepoints</span>
+                        <v-text-field
+                            v-model="teamStats.coach.basePoints"
+                            hide-details
+                            single-line
+                            variant="outlined"
+                            type="number"
+                            class="textField"
+                        />
+                    </div>
+                </v-expansion-panel-text>
+            </v-expansion-panel>
         </v-expansion-panels>
     </div>
 </template>
@@ -314,7 +315,6 @@ export default {
     // and will be exposed on `this`.
     data() {
         return {
-            coach: null,
         }
     },
 
@@ -328,8 +328,6 @@ export default {
     // of a component's lifecycle.
     // This function will be called when the component is mounted.
     async mounted() {
-        this.coach = this.localTeam.players.find(player => player.role === 'coach');
-        console.log(this.teamStats);
     }
 }
 </script>

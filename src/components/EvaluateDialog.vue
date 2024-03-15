@@ -138,11 +138,11 @@ export default {
     // They can be bound as event handlers in templates.
     methods: {
         async getInfo() {
-            this.stepperValue = 2;
             if(this.matchId !== '' && this.timestamp !== '') {
                 await this.requestMatchFromLolesports(this.matchId, this.timestamp);
                 this.parseDataToLocals();
                 this.calculateBasePoints();
+                this.stepperValue = 2;
                 // this.calculateItems();
             }
         },
@@ -224,7 +224,6 @@ export default {
 
         parseDataToLocals() {
             const teamsMetaData = this.matchRaw.frames[this.matchRaw.frames.length - 1];
-            console.log(teamsMetaData);
             teamsMetaData.blueTeam.players = [];
             teamsMetaData.redTeam.players = [];
 
@@ -238,7 +237,9 @@ export default {
                 teamsMetaData.redTeam.players.push(redPlayer);
             }
 
-            teamsMetaData.
+            teamsMetaData.blueTeam.coach = JSON.parse(JSON.stringify(this.teams.find(team => team._id === this.match.team1._id).players.find(player => player.role === 'coach')));
+            teamsMetaData.redTeam.coach = JSON.parse(JSON.stringify(this.teams.find(team => team._id === this.match.team2._id).players.find(player => player.role === 'coach')));
+
 
             this.blueTeam = teamsMetaData.blueTeam;
             this.redTeam = teamsMetaData.redTeam;
@@ -251,6 +252,8 @@ export default {
             this.redTeam.players.forEach((player) => {
                 player.basePoints = player.kills * 5 + player.deaths * (-3) + player.assists * 2;
             });
+            this.blueTeam.coach.basePoints = 1 * this.blueTeam.towers + 2 * this.blueTeam.dragons.length + 2 * this.blueTeam.inhibitors + 3 * this.blueTeam.barons;
+            this.redTeam.coach.basePoints = 1 * this.redTeam.towers + 2 * this.redTeam.dragons.length + 2 * this.redTeam.inhibitors + 3 * this.redTeam.barons;
         }
     },
 

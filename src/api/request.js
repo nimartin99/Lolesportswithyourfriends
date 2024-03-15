@@ -1,3 +1,5 @@
+const backendAddress = '85.215.158.110';
+
 const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -6,7 +8,7 @@ const getCookie = (name) => {
 
 const getRequest = async (path, body) => {
     const token = getCookie('token');
-    const response = await fetch('http://' + 'localhost:3000' + '/api' + path, {
+    const response = await fetch('http://' + backendAddress + ':3000' + '/api' + path, {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body),
         headers: {
@@ -19,7 +21,7 @@ const getRequest = async (path, body) => {
 
 const postRequest = async (path, body) => {
     const token = getCookie('token');
-    const response = await fetch('http://' + 'localhost:3000' + '/api' + path, {
+    const response = await fetch('http://' + backendAddress + ':3000' + '/api' + path, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body),
         headers: {
@@ -32,7 +34,7 @@ const postRequest = async (path, body) => {
 
 const patchRequest = async (path, body) => {
     const token = getCookie('token');
-    const response = await fetch('http://' + 'localhost:3000' + '/api' + path, {
+    const response = await fetch('http://' + backendAddress + ':3000' + '/api' + path, {
         method: "PATCH", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body),
         headers: {

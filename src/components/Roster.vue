@@ -2,7 +2,10 @@
     <div style="display: flex; flex-direction: column; padding: 1vw; color: white; height: 100%">
         <div class="rosterContainer">
             <!-- Top -->
-            <v-card class="playerCard">
+            <v-card
+                class="playerCard"
+                :style="'background-image: url(' + topPlayerImage + ')'"
+            >
                 <v-card-title>
                     <img :src="topLane">
                 </v-card-title>
@@ -22,7 +25,10 @@
                 <span v-if="top && top.evaluation">{{ top.evaluation?.basePoints }}</span>
             </v-card>
             <!-- Jungle -->
-            <v-card class="playerCard">
+            <v-card
+                class="playerCard"
+                :style="'background-image: url(' + junglePlayerImage + ')'"
+            >
                 <v-card-title>
                     <img :src="jungleLane">
                 </v-card-title>
@@ -42,7 +48,10 @@
                 <span v-if="jungle && jungle.evaluation">{{ jungle.evaluation?.basePoints }}</span>
             </v-card>
             <!-- Mid -->
-            <v-card class="playerCard">
+            <v-card
+                class="playerCard"
+                :style="'background-image: url(' + midPlayerImage + ')'"
+            >
                 <v-card-title>
                     <img :src="midLane">
                 </v-card-title>
@@ -62,7 +71,10 @@
                 <span v-if="mid && mid.evaluation">{{ mid.evaluation?.basePoints }}</span>
             </v-card>
             <!-- Bot -->
-            <v-card class="playerCard">
+            <v-card
+                class="playerCard"
+                :style="'background-image: url(' + botPlayerImage + ')'"
+            >
                 <v-card-title>
                     <img :src="botLane">
                 </v-card-title>
@@ -82,7 +94,10 @@
                 <span v-if="bot && bot.evaluation">{{ bot.evaluation?.basePoints }}</span>
             </v-card>
             <!-- Support -->
-            <v-card class="playerCard">
+            <v-card
+                class="playerCard"
+                :style="'background-image: url(' + supportPlayerImage + ')'"
+            >
                 <v-card-title>
                     <img :src="supportLane">
                 </v-card-title>
@@ -103,7 +118,10 @@
             </v-card>
             <v-spacer/>
             <!-- Coach -->
-            <v-card class="playerCard">
+            <v-card
+                class="playerCard"
+                :style="'background-image: url(' + coachPlayerImage + ')'"
+            >
                 <v-card-title>
                     <img :src="coachLane" style="width: 48px">
                 </v-card-title>
@@ -145,6 +163,7 @@ import botLane from "@/assets/lanes/bot.svg";
 import supportLane from "@/assets/lanes/support.svg";
 import coachLane from "@/assets/lanes/coach.svg";
 import * as request from "@/api/request";
+import playerImages from "../../const/playerImagesUrls";
 
 export default {
     name: "Roster",
@@ -174,6 +193,13 @@ export default {
             supportPlayers: [],
             coachPlayers: [],
 
+            topPlayerImage: null,
+            junglePlayerImage: null,
+            midPlayerImage: null,
+            botPlayerImage: null,
+            supportPlayerImage: null,
+            coachPlayerImage: null,
+
             snackbarActivator: false,
             snackbarText: '',
             snackbarColor: 'error',
@@ -196,6 +222,43 @@ export default {
             this.bot = this.myRoster.botPlayer;
             this.support = this.myRoster.supportPlayer;
             this.coach = this.myRoster.coachPlayer;
+        },
+
+        top() {
+            if(this.top && this.top.name) {
+                this.topPlayerImage = playerImages.playerImages.find(playerImage => this.top.name === playerImage.playerName).imageURL;
+
+            }
+        },
+
+        jungle() {
+            if(this.jungle && this.jungle.name) {
+                this.junglePlayerImage = playerImages.playerImages.find(playerImage => this.jungle.name === playerImage.playerName).imageURL;
+            }
+        },
+
+        mid() {
+            if(this.mid && this.mid.name) {
+                this.midPlayerImage = playerImages.playerImages.find(playerImage => this.mid.name === playerImage.playerName).imageURL;
+            }
+        },
+
+        bot() {
+            if(this.bot && this.bot.name) {
+                this.botPlayerImage = playerImages.playerImages.find(playerImage => this.bot.name === playerImage.playerName).imageURL;
+            }
+        },
+
+        support() {
+            if(this.support && this.support.name) {
+                this.supportPlayerImage = playerImages.playerImages.find(playerImage => this.support.name === playerImage.playerName).imageURL;
+            }
+        },
+
+        coach() {
+            if(this.coach && this.coach.name) {
+                this.coachPlayerImage = playerImages.playerImages.find(playerImage => this.coach.name === playerImage.playerName).imageURL;
+            }
         }
     },
 
@@ -230,8 +293,7 @@ export default {
         },
 
         getCurrentMatchDay() {
-            // ToDo: Remove this debugging date
-            const now = new Date(2024, 2, 10);
+            const now = new Date();
             let currentMatchDay = null;
             for (const matchDay of this.matchDays) {
                 if (matchDay.date.getTime() === this.stripTimeFromDate(now).getTime()) {
@@ -271,6 +333,9 @@ export default {
             };
             const response = await request.postRequest("/bet", betBody)
             if(response.status === 201) {
+                this.snackbarActivator = true;
+                this.snackbarText = 'Roster saved.'
+                this.snackbarColor = 'success';
                 // This could be made way more fancy by just replacing the single match in the matches array that is in
                 // the response body of the bet post request
                 // await this.requestMatches();
@@ -402,6 +467,9 @@ export default {
     height: 50%;
     display: flex;
     flex-direction: column;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 @media only screen and (max-width: 900px) {
