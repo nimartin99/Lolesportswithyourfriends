@@ -1,4 +1,4 @@
-const backendAddress = '85.215.158.110';
+const backendAddress = 'localhost';
 
 const getCookie = (name) => {
     const value = `; ${document.cookie}`;

@@ -280,7 +280,7 @@ export default {
         },
 
         getNextMatch() {
-            const now = new Date();
+            const now = this.now;
             let nextMatch = null;
             this.matches.forEach((match) => {
                 // When match is not in past save it in nextMatch if nextMatch is either not set or further in the
@@ -293,7 +293,7 @@ export default {
         },
 
         getCurrentMatchDay() {
-            const now = new Date();
+            const now = this.now;
             let currentMatchDay = null;
             for (const matchDay of this.matchDays) {
                 if (matchDay.date.getTime() === this.stripTimeFromDate(now).getTime()) {
@@ -315,7 +315,7 @@ export default {
             // }
 
             const nextMatch = this.getNextMatch();
-            console.log(nextMatch);
+            console.log(this.stripTimeFromDate(nextMatch.dateTime));
             if(nextMatch === null) {
                 this.snackbarActivator = true;
                 this.snackbarText = 'There are currently no matches to set your Roster for.'
@@ -332,6 +332,7 @@ export default {
                 coachPlayer: this.coach,
             };
             const response = await request.postRequest("/bet", betBody)
+            console.log(response);
             if(response.status === 201) {
                 this.snackbarActivator = true;
                 this.snackbarText = 'Roster saved.'
@@ -436,6 +437,7 @@ export default {
     // of a component's lifecycle.
     // This function will be called when the component is mounted.
     async mounted() {
+        this.now = new Date();
         this.teams = JSON.parse(JSON.stringify(await this.getTeams()));
         this.matchDays = await this.getMatchDays();
         this.matches = await this.getMatches();
