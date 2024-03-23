@@ -307,13 +307,6 @@ export default {
         },
 
         async saveRoster() {
-            // if(this.matchInPast(match)) {
-            //     this.snackbarActivator = true;
-            //     this.snackbarText = 'This game is over or in progress.'
-            //     this.snackbarColor = 'error';
-            //     return;
-            // }
-
             const nextMatch = this.getNextMatch();
             console.log(this.stripTimeFromDate(nextMatch.dateTime));
             if(nextMatch === null) {
@@ -342,7 +335,9 @@ export default {
                 // await this.requestMatches();
             } else if(response.status === 403) {
                 this.snackbarActivator = true;
-                this.snackbarText = 'You can only save your roster until 15 minutes before the first game starts.'
+                console.log(response);
+                const res = await response.json();
+                this.snackbarText = res.error;
                 this.snackbarColor = 'error';
             }
             else {
@@ -444,6 +439,7 @@ export default {
         this.currentMatchDay = this.getCurrentMatchDay();
         if(this.currentMatchDay) {
             this.myRoster = JSON.parse(JSON.stringify(await this.getMyRoster({ update: false, matchDay: this.stripTimeFromDate(this.currentMatchDay.date) })));
+            console.log(this.myRoster);
             await this.requestEvaluations();
         }
         // This should be executed after readyEvaluations()
