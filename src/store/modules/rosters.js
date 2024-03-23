@@ -24,7 +24,6 @@ const actions = {
             const response = await request.getRequest("/myRoster/" + params.matchDay);
             await checkResponseStatus(200, response);
             const res = await response.json();
-            console.log(res);
             commit('setMyRoster', res);
             return res;
         }
