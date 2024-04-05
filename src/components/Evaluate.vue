@@ -29,7 +29,7 @@
                             v-if="day.state !== 'finished'"
                             @click="openEvaluateDialog(match)"
                         >
-                            {{ 'Evaluate ' + (match.evaluation ? '(✓)' : '') }}
+                            {{ 'Evaluate ' + (match.evaluation && match.evaluation.length ? '(✓)' : '') }}
                         </v-btn>
                     </div>
                     <v-card

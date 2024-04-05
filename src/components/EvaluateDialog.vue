@@ -41,6 +41,20 @@
                         hide-details
                     />
                 </div>
+                <div
+                    v-if="match.matchType && match.matchType !== 'Bo1'"
+                    style="display: flex; flex-direction: row; align-items: center; width: 50%; justify-content: center"
+                >
+                    <span style="padding: 12px">Match of Series</span>
+                    <v-select
+                        v-model="matchNumber"
+                        :items="matchSelectionItems"
+                        density="compact"
+                        style="max-width: 20%"
+                    >
+
+                    </v-select>
+                </div>
             </div>
 
             <div
@@ -120,7 +134,8 @@ export default {
             snackbarText: '',
             snackbarColor: 'error',
 
-
+            matchSelectionItems: [],
+            matchNumber: 1,
 
             // Match vars
             winnerTeam: null,
@@ -265,6 +280,14 @@ export default {
 
         this.matchId = "111997906552170257";
         this.timestamp = "2024-03-11T17:18:50.000Z";
+
+        if(this.match.matchType === 'Bo3') {
+            this.matchSelectionItems = [1, 2, 3];
+        } else if(this.match.matchType === 'Bo5') {
+            this.matchSelectionItems = [1, 2, 3, 4, 5];
+        } else {
+            this.matchSelectionItems = [];
+        }
     }
 }
 </script>

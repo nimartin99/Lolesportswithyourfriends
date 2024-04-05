@@ -22,6 +22,15 @@
                     <input v-model="matchDateTime" type="datetime-local" id="birthdaytime" name="birthdaytime" style="padding: 4px 12px">
                 </v-sheet>
             </div>
+            <div style="display: flex; justify-content: center; padding: 12px; width: 100%">
+                <v-select
+                    v-model="matchType"
+                    :items="['Bo1', 'Bo3', 'Bo5']"
+                    style="max-width: 20%"
+                >
+
+                </v-select>
+            </div>
             <div style="display: flex; justify-content: center; padding: 12px">
                 <v-btn @click="createMatch">
                     Create
@@ -51,6 +60,7 @@ export default {
             selectedTeam1: null,
             selectedTeam2: null,
             matchDateTime: null,
+            matchType: 'Bo1',
 
             snackbarActivator: false,
             snackbarText: '',
@@ -66,6 +76,7 @@ export default {
                 team1: this.selectedTeam1._id,
                 team2: this.selectedTeam2._id,
                 dateTime: this.matchDateTime,
+                matchType: this.matchType,
             }
             const response = await request.postRequest("/match", body);
             this.snackbarActivator = true;
