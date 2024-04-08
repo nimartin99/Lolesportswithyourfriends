@@ -176,6 +176,7 @@ export default {
                 lolesportsTimestamp: this.timestamp,
                 blueTeam: this.blueTeam,
                 redTeam: this.redTeam,
+                matchNumber: this.matchNumber,
             };
             console.log(evaluation)
 
